@@ -717,6 +717,48 @@ img {
     width: 100%;
 }
 
+/* Data Tables (Public) */
+.content-table-wrapper {
+    overflow-x: auto;
+    margin: 40px 0;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+}
+
+.content-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--white);
+    text-align: left;
+}
+
+.content-table th,
+.content-table td {
+    padding: 20px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.content-table th {
+    font-family: var(--font-heading);
+    background-color: #fafafa;
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.content-table tr:last-child td {
+    border-bottom: none;
+}
+
+/* Additional Utilities for Content Pages */
+.text-center {
+    text-align: center;
+}
+
+.mt-2 { margin-top: 20px; }
+.mt-4 { margin-top: 40px; }
+.mb-2 { margin-bottom: 20px; }
+.mb-4 { margin-bottom: 40px; }
+
 /* Responsive */
 @media (max-width: 1024px) {
     .portfolio-grid {
