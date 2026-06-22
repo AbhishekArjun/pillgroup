@@ -54,10 +54,10 @@ const Footer = () => {
           </div>
           <div className="footer-right fade-up">
             <div className="social-links">
-              <a href="#">Facebook</a>
-              <a href="#">Instagram</a>
-              <a href="#">LinkedIn</a>
-              <a href="#">YouTube</a>
+              <a href="#">Facebook: /PilliGroupFoundation</a>
+              <a href="#">Instagram: @PilliFoundation</a>
+              <a href="#">LinkedIn: /company/pilli-group-foundation</a>
+              <a href="#">YouTube: /PilliFoundation</a>
             </div>
             <p className="copyright" style={{ marginTop: '20px', fontSize: '0.9rem', color: 'var(--text-muted)' }}>
               *Pilli Group Foundation is a registered 501(c)(3) nonprofit organization. All donations are tax-deductible.*<br/><br/>

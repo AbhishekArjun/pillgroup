@@ -85,6 +85,7 @@ const IndividualGiversPage = () => {
               <p className="hero-subtitle">For less than the cost of a weekly coffee, you can fund a child's entire K–12 education—and change their family's future forever.</p>
               <div style={{ display: 'flex', gap: '20px', marginTop: '40px', flexWrap: 'wrap' }}>
                 <a href="#sponsor" className="btn btn-primary">Meet Children Waiting</a>
+                <a href="#sponsor" className="btn btn-secondary" style={{ border: '1px solid var(--border-color)', padding: '15px 30px', borderRadius: '4px' }}>Start My Sponsorship</a>
                 <a href="#transparency" className="btn btn-secondary" style={{ border: '1px solid var(--border-color)', padding: '15px 30px', borderRadius: '4px' }}>See Where My Money Goes</a>
               </div>
             </div>
@@ -147,12 +148,81 @@ const IndividualGiversPage = () => {
           </div>
         </section>
 
-        <section className="testimonials section bg-dark">
+        {/* Your Sponsorship Journey & The Child You'll Meet */}
+        <section className="section bg-dark">
+          <div className="container">
+            <div className="section-header fade-up">
+              <h2 className="section-title">Your Sponsorship Journey</h2>
+            </div>
+            <div className="services-grid mb-4">
+              <div className="service-item fade-up">
+                <h3>The Child You'll Meet</h3>
+                <p>Every child on our platform has been verified by local staff and is genuinely in need of educational support. Browse by:</p>
+                <ul style={{ marginTop: '10px', color: 'var(--text-muted)', listStyle: 'none', padding: 0 }}>
+                  <li style={{marginBottom: '5px'}}>• <strong>Country</strong> — 18 nations across 4 continents</li>
+                  <li style={{marginBottom: '5px'}}>• <strong>Age</strong> — Kindergarten through Grade 12</li>
+                  <li style={{marginBottom: '5px'}}>• <strong>Need Level</strong> — Orphaned, single-parent household, extreme poverty, refugee status</li>
+                </ul>
+              </div>
+              <div className="service-item fade-up" style={{ transitionDelay: '0.1s' }}>
+                <h3>Your Personal Connection</h3>
+                <ul style={{ marginTop: '10px', color: 'var(--text-muted)', listStyle: 'none', padding: 0 }}>
+                  <li style={{marginBottom: '10px'}}><strong>Month 1:</strong> Welcome packet with photo, story, and first letter</li>
+                  <li style={{marginBottom: '10px'}}><strong>Quarterly:</strong> Updated photo, report card, and handwritten letter</li>
+                  <li style={{marginBottom: '10px'}}><strong>Annually:</strong> Video message from your child</li>
+                  <li style={{marginBottom: '10px'}}><strong>Milestones:</strong> Graduation certificate, next-step plans, opportunity to continue supporting university</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="testimonials section">
           <div className="container">
             <div className="section-header fade-up text-center mb-4">
               <h2 className="section-title">Real Sponsors, Real Stories</h2>
             </div>
             <TestimonialSlider testimonials={testimonials} />
+          </div>
+        </section>
+
+        {/* Full Transparency */}
+        <section id="transparency" className="section bg-dark">
+          <div className="container">
+            <div className="section-header fade-up text-center">
+              <h2 className="section-title">Full Transparency</h2>
+            </div>
+            <div className="fade-up" style={{color: 'var(--text-muted)', maxWidth: '800px', margin: '0 auto', fontSize: '1.1rem'}}>
+              <ul style={{ listStyle: 'none', padding: 0 }}>
+                <li style={{marginBottom: '20px'}}>✅ 100% of your $50 goes to your child's education</li>
+                <li style={{marginBottom: '20px'}}>✅ Zero administrative fees charged to sponsorships</li>
+                <li style={{marginBottom: '20px'}}>✅ Cancel anytime—no guilt, no penalties</li>
+                <li style={{marginBottom: '20px'}}>✅ Independent audits published annually</li>
+                <li style={{marginBottom: '20px'}}>✅ Tax-deductible in the India, US, UK, Canada, and Australia</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        {/* Other Ways to Give */}
+        <section className="section">
+          <div className="container">
+            <div className="section-header fade-up">
+              <h2 className="section-title">Other Ways to Give</h2>
+            </div>
+            <div className="content-table-wrapper fade-up">
+              <table className="content-table">
+                <thead>
+                  <tr><th>Option</th><th>Perfect For</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td><strong>One-Time Gift</strong></td><td>$25 buys a year's school supplies</td></tr>
+                  <tr><td><strong>Birthday Campaign</strong></td><td>Ask friends to sponsor instead of gifts</td></tr>
+                  <tr><td><strong>Legacy Giving</strong></td><td>Include education in your will</td></tr>
+                  <tr><td><strong>Group Sponsorship</strong></td><td>Split costs with friends or coworkers</td></tr>
+                </tbody>
+              </table>
+            </div>
           </div>
         </section>
 

@@ -117,6 +117,7 @@ const LandingPage = () => {
               <div style={{ display: 'flex', gap: '20px', marginTop: '40px' }}>
                 <Link to="/individuals" className="btn btn-primary">Sponsor a Child Today</Link>
                 <a href="#impact" className="btn btn-secondary" style={{ border: '1px solid var(--border-color)', padding: '15px 30px', borderRadius: '4px' }}>Learn Our Impact</a>
+                <Link to="/individuals" className="btn btn-secondary" style={{ border: '1px solid var(--border-color)', padding: '15px 30px', borderRadius: '4px' }}>Donate Now</Link>
               </div>
             </div>
           </div>
@@ -353,6 +354,25 @@ const LandingPage = () => {
                   <tr><td><strong>Fundraise</strong></td><td>Start a campaign for birthdays, marathons, or events</td></tr>
                 </tbody>
               </table>
+            </div>
+          </div>
+        </section>
+
+        {/* Partner With Us */}
+        <section className="section bg-dark">
+          <div className="container">
+            <div className="section-header fade-up">
+              <h2 className="section-title">Partner With Us</h2>
+              <p className="section-desc" style={{color: 'rgba(255,255,255,0.7)'}}>We collaborate with:</p>
+            </div>
+            <div className="fade-up" style={{color: 'rgba(255,255,255,0.7)', fontSize: '1.1rem'}}>
+              <ul style={{ listStyle: 'none', padding: 0 }}>
+                <li style={{marginBottom: '10px'}}>• Local governments and ministries of education</li>
+                <li style={{marginBottom: '10px'}}>• International NGOs and UN agencies</li>
+                <li style={{marginBottom: '10px'}}>• Corporate sponsors and CSR programs</li>
+                <li style={{marginBottom: '10px'}}>• Faith-based organizations</li>
+                <li style={{marginBottom: '10px'}}>• Individual philanthropists</li>
+              </ul>
             </div>
           </div>
         </section>
