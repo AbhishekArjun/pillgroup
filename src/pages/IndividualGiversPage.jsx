@@ -105,9 +105,15 @@ const IndividualGiversPage = () => {
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '30px' }}>
                 {childrenAwaiting.map((child, idx) => (
                   <div key={child.id} className="fade-up" style={{ background: 'var(--bg-card)', padding: '30px', borderRadius: '8px', transitionDelay: `${idx * 0.1}s` }}>
-                    <div style={{ width: '60px', height: '60px', borderRadius: '50%', background: 'var(--accent-color)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem', marginBottom: '20px' }}>
-                      {child.name.charAt(0)}
-                    </div>
+                    {child.imageUrl ? (
+                      <div style={{ width: '100%', height: '200px', borderRadius: '8px', marginBottom: '20px', overflow: 'hidden' }}>
+                        <img src={`/api${child.imageUrl}`} alt={child.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      </div>
+                    ) : (
+                      <div style={{ width: '60px', height: '60px', borderRadius: '50%', background: 'var(--accent-color)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem', marginBottom: '20px' }}>
+                        {child.name.charAt(0)}
+                      </div>
+                    )}
                     <h3 style={{ color: 'var(--white)', marginBottom: '10px' }}>{child.name}</h3>
                     <p style={{ color: 'var(--text-muted)', marginBottom: '5px' }}><strong>Age:</strong> {child.age}</p>
                     <p style={{ color: 'var(--text-muted)', marginBottom: '5px' }}><strong>Location:</strong> {child.location}</p>

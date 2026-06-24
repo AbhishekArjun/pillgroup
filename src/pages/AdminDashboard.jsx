@@ -1,21 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { getChildrenData, addChild, updateChild, deleteChild } from '../utils/storage';
+import { getChildrenData, addChild, updateChild, deleteChild, loginAdmin, getAuthToken, clearAuthToken } from '../utils/storage';
 
 const AdminDashboard = () => {
+  const [isAuthenticated, setIsAuthenticated] = useState(!!getAuthToken());
+  const [loginForm, setLoginForm] = useState({ email: '', password: '' });
+  const [loginError, setLoginError] = useState('');
+
   const [childrenData, setChildrenData] = useState([]);
 
   useEffect(() => {
-    getChildrenData().then(data => setChildrenData(data));
-  }, []);
-
+    if (isAuthenticated) {
+      getChildrenData().then(data => setChildrenData(data));
+    }
+  }, [isAuthenticated]);
 
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingChild, setEditingChild] = useState(null); // null means "Add New", object means "Edit"
   
   // Form State
-  const [formData, setFormData] = useState({ name: '', age: '', location: '', need: '', status: 'Awaiting Sponsor' });
+  const [formData, setFormData] = useState({ name: '', age: '', location: '', need: '', status: 'Awaiting Sponsor', image: null });
 
   // Calculated Stats
   const totalSponsored = childrenData.filter(c => c.status === 'Sponsored').length;
@@ -24,13 +29,29 @@ const AdminDashboard = () => {
   const totalFunds = totalSponsored * 500;
 
   // Handlers
+  const handleLoginSubmit = async (e) => {
+    e.preventDefault();
+    setLoginError('');
+    try {
+      await loginAdmin(loginForm.email, loginForm.password);
+      setIsAuthenticated(true);
+    } catch (err) {
+      setLoginError(err.message || 'Login failed');
+    }
+  };
+
+  const handleLogout = () => {
+    clearAuthToken();
+    setIsAuthenticated(false);
+  };
+
   const handleOpenModal = (child = null) => {
     if (child) {
       setEditingChild(child);
-      setFormData(child);
+      setFormData({ ...child, image: null }); // Don't try to prepopulate file input
     } else {
       setEditingChild(null);
-      setFormData({ name: '', age: '', location: '', need: '', status: 'Awaiting Sponsor' });
+      setFormData({ name: '', age: '', location: '', need: '', status: 'Awaiting Sponsor', image: null });
     }
     setIsModalOpen(true);
   };
@@ -41,33 +62,82 @@ const AdminDashboard = () => {
   };
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    const { name, value, files } = e.target;
+    if (name === 'image' && files.length > 0) {
+      setFormData(prev => ({ ...prev, image: files[0] }));
+    } else {
+      setFormData(prev => ({ ...prev, [name]: value }));
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (editingChild) {
-      // Update existing
-      await updateChild(editingChild.id, formData);
-      setChildrenData(prev => prev.map(child => child.id === editingChild.id ? { ...formData, id: editingChild.id } : child));
-    } else {
-      // Add new
-      const newChild = await addChild(formData);
-      if (newChild) {
-        setChildrenData(prev => [...prev, newChild]);
-      }
+    
+    const submitData = new FormData();
+    submitData.append('name', formData.name);
+    submitData.append('age', formData.age);
+    submitData.append('location', formData.location);
+    submitData.append('need', formData.need);
+    submitData.append('status', formData.status);
+    if (formData.image) {
+      submitData.append('image', formData.image);
     }
-    handleCloseModal();
+
+    try {
+      if (editingChild) {
+        // Update existing
+        const updatedChild = await updateChild(editingChild.id, submitData);
+        // Note: the backend returns {message, changes}, not the full child, so we might need to re-fetch or optimistically update. 
+        // For simplicity, let's re-fetch all children on save
+        const newData = await getChildrenData();
+        setChildrenData(newData);
+      } else {
+        // Add new
+        const newChild = await addChild(submitData);
+        if (newChild) {
+          setChildrenData(prev => [...prev, newChild]);
+        }
+      }
+      handleCloseModal();
+    } catch (err) {
+      alert(err.message);
+    }
   };
 
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this profile?")) {
-      await deleteChild(id);
-      setChildrenData(prev => prev.filter(c => c.id !== id));
-      handleCloseModal();
+      try {
+        await deleteChild(id);
+        setChildrenData(prev => prev.filter(c => c.id !== id));
+        handleCloseModal();
+      } catch(err) {
+        alert(err.message);
+      }
     }
   };
+
+  if (!isAuthenticated) {
+    return (
+      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg-main)' }}>
+        <div style={{ background: 'var(--bg-card)', padding: '40px', borderRadius: '8px', width: '100%', maxWidth: '400px', boxShadow: '0 4px 20px rgba(0,0,0,0.1)' }}>
+          <h2 style={{ color: 'var(--text-main)', marginBottom: '20px', textAlign: 'center' }}>Admin Login</h2>
+          {loginError && <div style={{ color: 'red', marginBottom: '15px', textAlign: 'center' }}>{loginError}</div>}
+          <form onSubmit={handleLoginSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+            <div className="form-group">
+              <label>Email</label>
+              <input type="email" required value={loginForm.email} onChange={e => setLoginForm({...loginForm, email: e.target.value})} style={{ width: '100%', padding: '10px' }} />
+            </div>
+            <div className="form-group">
+              <label>Password</label>
+              <input type="password" required value={loginForm.password} onChange={e => setLoginForm({...loginForm, password: e.target.value})} style={{ width: '100%', padding: '10px' }} />
+            </div>
+            <button type="submit" className="btn btn-primary" style={{ marginTop: '10px' }}>Login</button>
+            <Link to="/" style={{ textAlign: 'center', color: 'var(--text-muted)', marginTop: '10px', display: 'block' }}>Back to Home</Link>
+          </form>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="admin-body">
@@ -87,7 +157,8 @@ const AdminDashboard = () => {
             </ul>
           </nav>
           <div className="sidebar-footer">
-            <Link to="/" className="logout-btn">Back to Website</Link>
+            <button onClick={handleLogout} className="logout-btn" style={{ width: '100%', cursor: 'pointer', border: 'none' }}>Logout</button>
+            <Link to="/" className="logout-btn" style={{ display: 'block', textAlign: 'center', marginTop: '10px' }}>Back to Website</Link>
           </div>
         </aside>
 
@@ -138,6 +209,7 @@ const AdminDashboard = () => {
                 <table className="data-table">
                   <thead>
                     <tr>
+                      <th>Image</th>
                       <th>Child Name</th>
                       <th>Age</th>
                       <th>Location</th>
@@ -149,6 +221,13 @@ const AdminDashboard = () => {
                   <tbody>
                     {childrenData.map(child => (
                       <tr key={child.id}>
+                        <td>
+                          {child.imageUrl ? (
+                            <img src={`/api${child.imageUrl}`} alt={child.name} style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover' }} />
+                          ) : (
+                            <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: '#ccc', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{child.name.charAt(0)}</div>
+                          )}
+                        </td>
                         <td><strong>{child.name}</strong></td>
                         <td>{child.age}</td>
                         <td>{child.location}</td>
@@ -165,7 +244,7 @@ const AdminDashboard = () => {
                     ))}
                     {childrenData.length === 0 && (
                       <tr>
-                        <td colSpan="6" style={{textAlign: 'center', padding: '30px'}}>No profiles found.</td>
+                        <td colSpan="7" style={{textAlign: 'center', padding: '30px'}}>No profiles found.</td>
                       </tr>
                     )}
                   </tbody>
@@ -212,6 +291,12 @@ const AdminDashboard = () => {
                 <option value="Awaiting Sponsor">Awaiting Sponsor</option>
                 <option value="Sponsored">Sponsored</option>
               </select>
+            </div>
+            
+            <div className="form-group">
+              <label>Profile Image (Optional)</label>
+              <input type="file" name="image" accept="image/*" onChange={handleChange} />
+              {editingChild && editingChild.imageUrl && <p style={{ fontSize: '0.8rem', color: '#666', marginTop: '5px' }}>Current image: {editingChild.imageUrl}</p>}
             </div>
 
             <div className="modal-actions">

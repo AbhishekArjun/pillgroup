@@ -1,3 +1,32 @@
+export const getAuthToken = () => localStorage.getItem('adminToken');
+export const setAuthToken = (token) => localStorage.setItem('adminToken', token);
+export const clearAuthToken = () => localStorage.removeItem('adminToken');
+
+const getAuthHeaders = () => {
+  const token = getAuthToken();
+  return token ? { 'Authorization': `Bearer ${token}` } : {};
+};
+
+export const loginAdmin = async (email, password) => {
+  try {
+    const res = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password })
+    });
+    if (!res.ok) {
+      const error = await res.json();
+      throw new Error(error.error || 'Login failed');
+    }
+    const data = await res.json();
+    setAuthToken(data.token);
+    return true;
+  } catch (err) {
+    console.error("Login Error:", err);
+    throw err;
+  }
+};
+
 export const getChildrenData = async () => {
   try {
     const res = await fetch('/api/children');
@@ -9,49 +38,61 @@ export const getChildrenData = async () => {
   }
 };
 
-export const saveChildrenData = async (data) => {
-  // If data is an array, we might be trying to save multiple (not optimal for REST, but let's handle single saves in the components)
-  // This function is kept for backwards compatibility but we will primarily use specific POST/PUT endpoints.
-  console.warn("saveChildrenData is deprecated. Use specific add/update endpoints instead.");
-};
-
-export const addChild = async (child) => {
+export const addChild = async (formData) => {
   try {
     const res = await fetch('/api/children', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(child)
+      headers: { ...getAuthHeaders() }, // Don't set Content-Type to application/json, browser sets it to multipart/form-data with boundary
+      body: formData // This should be a FormData object
     });
+    if (!res.ok) {
+      const error = await res.json();
+      throw new Error(error.error || 'Failed to add child');
+    }
     return await res.json();
   } catch (err) {
     console.error("Failed to add child:", err);
+    throw err;
   }
 };
 
-export const updateChild = async (id, childData) => {
+export const updateChild = async (id, formData) => {
   try {
     const res = await fetch(`/api/children/${id}`, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(childData)
+      headers: { ...getAuthHeaders() },
+      body: formData // This should be a FormData object
     });
+    if (!res.ok) {
+      const error = await res.json();
+      throw new Error(error.error || 'Failed to update child');
+    }
     return await res.json();
   } catch (err) {
     console.error("Failed to update child:", err);
+    throw err;
   }
 };
 
 export const deleteChild = async (id) => {
   try {
     const res = await fetch(`/api/children/${id}`, {
-      method: 'DELETE'
+      method: 'DELETE',
+      headers: { ...getAuthHeaders() }
     });
+    if (!res.ok) throw new Error('Failed to delete child');
     return await res.json();
   } catch (err) {
     console.error("Failed to delete child:", err);
+    throw err;
   }
 };
 
+// For quick status updates (like from the public checkout form, if we allow that. Usually protected, but for demo we can use a mock token or let it fail if unauthorized. Wait, we protected PUT /api/children/:id. We might need a public route or use admin token.)
+// For now, let's keep it but it will need auth.
 export const updateChildStatus = async (id, newStatus) => {
-  return await updateChild(id, { status: newStatus });
+  // Creating a FormData since updateChild expects it
+  const formData = new FormData();
+  formData.append('status', newStatus);
+  return await updateChild(id, formData);
 };
