@@ -1,33 +1,57 @@
-const STORAGE_KEY = 'pilli_foundation_children_v1';
-
-const defaultChildren = [
-  { id: 1, name: "Aisha M.", age: 8, location: "Nairobi, Kenya", need: "Primary School Tuition", status: "Awaiting Sponsor" },
-  { id: 2, name: "Rahul S.", age: 10, location: "Mumbai, India", need: "Books & Uniform", status: "Sponsored" },
-  { id: 3, name: "Elena G.", age: 7, location: "Bogota, Colombia", need: "Primary School Tuition", status: "Awaiting Sponsor" },
-  { id: 4, name: "Samuel O.", age: 12, location: "Lagos, Nigeria", need: "High School Prep", status: "Awaiting Sponsor" },
-  { id: 5, name: "Mai N.", age: 9, location: "Hanoi, Vietnam", need: "After-school Program", status: "Sponsored" },
-  { id: 6, name: "David T.", age: 6, location: "Accra, Ghana", need: "Kindergarten Support", status: "Awaiting Sponsor" }
-];
-
-export const getChildrenData = () => {
-  const data = localStorage.getItem(STORAGE_KEY);
-  if (data) {
-    return JSON.parse(data);
+export const getChildrenData = async () => {
+  try {
+    const res = await fetch('/api/children');
+    if (!res.ok) throw new Error('Network response was not ok');
+    return await res.json();
+  } catch (err) {
+    console.error("Failed to fetch children:", err);
+    return [];
   }
-  // Initialize if empty
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultChildren));
-  return defaultChildren;
 };
 
-export const saveChildrenData = (data) => {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+export const saveChildrenData = async (data) => {
+  // If data is an array, we might be trying to save multiple (not optimal for REST, but let's handle single saves in the components)
+  // This function is kept for backwards compatibility but we will primarily use specific POST/PUT endpoints.
+  console.warn("saveChildrenData is deprecated. Use specific add/update endpoints instead.");
 };
 
-export const updateChildStatus = (id, newStatus) => {
-  const currentData = getChildrenData();
-  const updatedData = currentData.map(child => 
-    child.id === id ? { ...child, status: newStatus } : child
-  );
-  saveChildrenData(updatedData);
-  return updatedData;
+export const addChild = async (child) => {
+  try {
+    const res = await fetch('/api/children', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(child)
+    });
+    return await res.json();
+  } catch (err) {
+    console.error("Failed to add child:", err);
+  }
+};
+
+export const updateChild = async (id, childData) => {
+  try {
+    const res = await fetch(`/api/children/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(childData)
+    });
+    return await res.json();
+  } catch (err) {
+    console.error("Failed to update child:", err);
+  }
+};
+
+export const deleteChild = async (id) => {
+  try {
+    const res = await fetch(`/api/children/${id}`, {
+      method: 'DELETE'
+    });
+    return await res.json();
+  } catch (err) {
+    console.error("Failed to delete child:", err);
+  }
+};
+
+export const updateChildStatus = async (id, newStatus) => {
+  return await updateChild(id, { status: newStatus });
 };

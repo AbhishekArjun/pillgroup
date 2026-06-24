@@ -1,20 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { getChildrenData, saveChildrenData } from '../utils/storage';
+import { getChildrenData, addChild, updateChild, deleteChild } from '../utils/storage';
 
 const AdminDashboard = () => {
   const [childrenData, setChildrenData] = useState([]);
 
   useEffect(() => {
-    setChildrenData(getChildrenData());
+    getChildrenData().then(data => setChildrenData(data));
   }, []);
 
-  // Sync state to local storage whenever it changes
-  useEffect(() => {
-    if (childrenData.length > 0) {
-      saveChildrenData(childrenData);
-    }
-  }, [childrenData]);
 
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -51,21 +45,25 @@ const AdminDashboard = () => {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (editingChild) {
       // Update existing
+      await updateChild(editingChild.id, formData);
       setChildrenData(prev => prev.map(child => child.id === editingChild.id ? { ...formData, id: editingChild.id } : child));
     } else {
       // Add new
-      const newId = childrenData.length > 0 ? Math.max(...childrenData.map(c => c.id)) + 1 : 1;
-      setChildrenData(prev => [...prev, { ...formData, id: newId }]);
+      const newChild = await addChild(formData);
+      if (newChild) {
+        setChildrenData(prev => [...prev, newChild]);
+      }
     }
     handleCloseModal();
   };
 
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this profile?")) {
+      await deleteChild(id);
       setChildrenData(prev => prev.filter(c => c.id !== id));
       handleCloseModal();
     }

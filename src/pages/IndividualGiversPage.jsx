@@ -13,15 +13,11 @@ const IndividualGiversPage = () => {
 
   useEffect(() => {
     // Load children needing sponsorship
-    const loadChildren = () => {
-      const data = getChildrenData();
+    const loadChildren = async () => {
+      const data = await getChildrenData();
       setChildrenAwaiting(data.filter(c => c.status === 'Awaiting Sponsor'));
     };
     loadChildren();
-
-    // Re-load if localStorage changes (e.g., from Admin Dashboard in another tab)
-    window.addEventListener('storage', loadChildren);
-    return () => window.removeEventListener('storage', loadChildren);
   }, []);
 
   useEffect(() => {
@@ -48,11 +44,11 @@ const IndividualGiversPage = () => {
     setSuccessMsg('');
   };
 
-  const handleCheckoutSubmit = (e) => {
+  const handleCheckoutSubmit = async (e) => {
     e.preventDefault();
     if (selectedChild) {
       // Update global database
-      updateChildStatus(selectedChild.id, 'Sponsored');
+      await updateChildStatus(selectedChild.id, 'Sponsored');
       
       // Update local state
       setChildrenAwaiting(prev => prev.filter(c => c.id !== selectedChild.id));
