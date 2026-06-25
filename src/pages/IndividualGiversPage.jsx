@@ -107,7 +107,7 @@ const IndividualGiversPage = () => {
                   <div key={child.id} className="fade-up" style={{ background: 'var(--bg-card)', padding: '30px', borderRadius: '8px', transitionDelay: `${idx * 0.1}s` }}>
                     {child.imageUrl ? (
                       <div style={{ width: '100%', height: '200px', borderRadius: '8px', marginBottom: '20px', overflow: 'hidden' }}>
-                        <img src={`/api${child.imageUrl}`} alt={child.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        <img src={child.imageUrl} alt={child.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                       </div>
                     ) : (
                       <div style={{ width: '60px', height: '60px', borderRadius: '50%', background: 'var(--accent-color)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem', marginBottom: '20px' }}>

@@ -1,98 +1,106 @@
-export const getAuthToken = () => localStorage.getItem('adminToken');
-export const setAuthToken = (token) => localStorage.setItem('adminToken', token);
-export const clearAuthToken = () => localStorage.removeItem('adminToken');
+import { db, storage } from '../firebase';
+import { collection, getDocs, addDoc, updateDoc, doc, deleteDoc } from 'firebase/firestore';
+import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
 
-const getAuthHeaders = () => {
-  const token = getAuthToken();
-  return token ? { 'Authorization': `Bearer ${token}` } : {};
-};
-
-export const loginAdmin = async (email, password) => {
-  try {
-    const res = await fetch('/api/auth/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password })
-    });
-    if (!res.ok) {
-      const error = await res.json();
-      throw new Error(error.error || 'Login failed');
-    }
-    const data = await res.json();
-    setAuthToken(data.token);
-    return true;
-  } catch (err) {
-    console.error("Login Error:", err);
-    throw err;
-  }
-};
+const CHILDREN_COLLECTION = 'children';
 
 export const getChildrenData = async () => {
   try {
-    const res = await fetch('/api/children');
-    if (!res.ok) throw new Error('Network response was not ok');
-    return await res.json();
+    const querySnapshot = await getDocs(collection(db, CHILDREN_COLLECTION));
+    const children = [];
+    querySnapshot.forEach((doc) => {
+      children.push({ id: doc.id, ...doc.data() });
+    });
+    return children;
   } catch (err) {
-    console.error("Failed to fetch children:", err);
+    console.error("Failed to fetch children from Firebase:", err);
     return [];
   }
 };
 
 export const addChild = async (formData) => {
   try {
-    const res = await fetch('/api/children', {
-      method: 'POST',
-      headers: { ...getAuthHeaders() }, // Don't set Content-Type to application/json, browser sets it to multipart/form-data with boundary
-      body: formData // This should be a FormData object
-    });
-    if (!res.ok) {
-      const error = await res.json();
-      throw new Error(error.error || 'Failed to add child');
+    const childData = {
+      name: formData.get('name'),
+      age: formData.get('age'),
+      location: formData.get('location'),
+      need: formData.get('need'),
+      status: formData.get('status'),
+      imageUrl: null
+    };
+
+    const imageFile = formData.get('image');
+    if (imageFile && imageFile instanceof File) {
+      const storageRef = ref(storage, `images/${Date.now()}_${imageFile.name}`);
+      const snapshot = await uploadBytes(storageRef, imageFile);
+      const downloadURL = await getDownloadURL(snapshot.ref);
+      childData.imageUrl = downloadURL;
+      childData.storagePath = snapshot.ref.fullPath;
     }
-    return await res.json();
+
+    const docRef = await addDoc(collection(db, CHILDREN_COLLECTION), childData);
+    return { id: docRef.id, ...childData };
   } catch (err) {
-    console.error("Failed to add child:", err);
+    console.error("Failed to add child to Firebase:", err);
     throw err;
   }
 };
 
 export const updateChild = async (id, formData) => {
   try {
-    const res = await fetch(`/api/children/${id}`, {
-      method: 'PUT',
-      headers: { ...getAuthHeaders() },
-      body: formData // This should be a FormData object
+    const childRef = doc(db, CHILDREN_COLLECTION, id);
+    const updates = {};
+    
+    // Extract fields from formData if they exist
+    ['name', 'age', 'location', 'need', 'status'].forEach(field => {
+      if (formData.has(field)) {
+        updates[field] = formData.get(field);
+      }
     });
-    if (!res.ok) {
-      const error = await res.json();
-      throw new Error(error.error || 'Failed to update child');
+
+    const imageFile = formData.get('image');
+    if (imageFile && imageFile instanceof File) {
+      // Assuming we don't delete the old image here to keep it simple, 
+      // but in a real app we'd fetch the old doc and delete its storage object
+      const storageRef = ref(storage, `images/${Date.now()}_${imageFile.name}`);
+      const snapshot = await uploadBytes(storageRef, imageFile);
+      const downloadURL = await getDownloadURL(snapshot.ref);
+      updates.imageUrl = downloadURL;
+      updates.storagePath = snapshot.ref.fullPath;
     }
-    return await res.json();
+
+    await updateDoc(childRef, updates);
+    return { id, ...updates };
   } catch (err) {
-    console.error("Failed to update child:", err);
+    console.error("Failed to update child in Firebase:", err);
     throw err;
   }
 };
 
-export const deleteChild = async (id) => {
+export const deleteChild = async (id, storagePath = null) => {
   try {
-    const res = await fetch(`/api/children/${id}`, {
-      method: 'DELETE',
-      headers: { ...getAuthHeaders() }
-    });
-    if (!res.ok) throw new Error('Failed to delete child');
-    return await res.json();
+    const childRef = doc(db, CHILDREN_COLLECTION, id);
+    await deleteDoc(childRef);
+
+    if (storagePath) {
+      const imageRef = ref(storage, storagePath);
+      await deleteObject(imageRef).catch(e => console.log("Failed to delete image from storage", e));
+    }
+    
+    return { message: "Deleted successfully" };
   } catch (err) {
-    console.error("Failed to delete child:", err);
+    console.error("Failed to delete child from Firebase:", err);
     throw err;
   }
 };
 
-// For quick status updates (like from the public checkout form, if we allow that. Usually protected, but for demo we can use a mock token or let it fail if unauthorized. Wait, we protected PUT /api/children/:id. We might need a public route or use admin token.)
-// For now, let's keep it but it will need auth.
 export const updateChildStatus = async (id, newStatus) => {
-  // Creating a FormData since updateChild expects it
-  const formData = new FormData();
-  formData.append('status', newStatus);
-  return await updateChild(id, formData);
+  try {
+    const childRef = doc(db, CHILDREN_COLLECTION, id);
+    await updateDoc(childRef, { status: newStatus });
+    return { id, status: newStatus };
+  } catch (err) {
+    console.error("Failed to update child status in Firebase:", err);
+    throw err;
+  }
 };
