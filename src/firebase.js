@@ -4,7 +4,6 @@ import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
-// Your Firebase configuration (real values)
 const firebaseConfig = {
   apiKey: "AIzaSyD1LW8QDc-0sslH8wIHfMBs5HYh23neo68",
   authDomain: "pill-343f0.firebaseapp.com",
@@ -15,8 +14,21 @@ const firebaseConfig = {
   measurementId: "G-4QEDEKDLZP"
 };
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
+const requiredKeys = ['apiKey', 'authDomain', 'projectId', 'storageBucket', 'messagingSenderId', 'appId'];
+const missingKeys = requiredKeys.filter(key => !(key in firebaseConfig));
+if (missingKeys.length) {
+  const errMsg = `Firebase configuration missing keys: ${missingKeys.join(', ')}`;
+  console.error(errMsg);
+  throw new Error(errMsg);
+}
+
+let app;
+try {
+  app = initializeApp(firebaseConfig);
+} catch (initErr) {
+  console.error('Failed to initialize Firebase app:', initErr);
+  throw initErr;
+}
 
 // Initialize Firebase services
 export const analytics = getAnalytics(app);
