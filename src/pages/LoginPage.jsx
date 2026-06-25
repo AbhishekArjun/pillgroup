@@ -20,7 +20,7 @@ function LoginPage() {
       await login(email, password);
       navigate('/admin');
     } catch (err) {
-      setError('Failed to log in. Please check your credentials.');
+      setError(err.message || 'Failed to log in. Please check your credentials.');
       console.error(err);
     } finally {
       setLoading(false);

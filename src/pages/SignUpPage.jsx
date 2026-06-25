@@ -25,7 +25,7 @@ function SignUpPage() {
       await createUserWithEmailAndPassword(auth, email, password);
       navigate('/welcome');
     } catch (err) {
-      setError('Failed to create account. Please try again.');
+      setError(err.message || 'Failed to create account. Please try again.');
       console.error(err);
     } finally {
       setLoading(false);
