@@ -8,6 +8,7 @@ A full-stack web application designed for a non-governmental organization (NGO) 
   - Dynamic landing page with engaging UI/UX.
   - Interactive "Individual Givers" page showcasing children profiles.
   - Dedicated Admin Dashboard to manage sponsorships.
+  - **Firebase Integration:** Authentication (Login/Signup) and prepared Firestore/Hosting configuration.
 - **Backend (Node.js + Express + SQLite)**
   - RESTful API with structured MVC architecture (Models, Views, Controllers).
   - Secure Admin Authentication using JWT (JSON Web Tokens) and bcrypt.
@@ -16,10 +17,10 @@ A full-stack web application designed for a non-governmental organization (NGO) 
 
 ## Technology Stack
 
-- **Frontend:** React, Vite, React Router, Vanilla CSS
+- **Frontend:** React, Vite, React Router, Vanilla CSS, Firebase (Auth, Firestore, Hosting)
 - **Backend:** Node.js, Express.js
-- **Database:** SQLite
-- **Security & Uploads:** jsonwebtoken, bcrypt, multer
+- **Database:** SQLite & Firebase Firestore
+- **Security & Uploads:** jsonwebtoken, bcrypt, multer, Firebase Auth
 
 ## Getting Started
 
