@@ -9,6 +9,8 @@ import IndividualGiversPage from './pages/IndividualGiversPage';
 import LoginPage from './pages/LoginPage';
 import SignUpPage from './pages/SignUpPage';
 import WelcomePage from './pages/WelcomePage';
+import DashboardPage from './pages/DashboardPage';
+import DonatePage from './pages/DonatePage';
 
 function App() {
   return (
@@ -22,6 +24,8 @@ function App() {
         <Route path="/churches" element={<ChurchesPage />} />
         <Route path="/individuals" element={<IndividualGiversPage />} />
         <Route path="/landing" element={<LandingPage />} />
+        <Route path="/dashboard" element={<DashboardPage />} />
+        <Route path="/donate" element={<DonatePage />} />
       </Routes>
     </AuthProvider>
   );

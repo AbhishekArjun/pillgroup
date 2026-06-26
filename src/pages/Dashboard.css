@@ -1,0 +1,50 @@
+/* Dashboard.css – styling for the new Firebase‑style dashboard */
+
+.dashboard-container {
+  font-family: 'Inter', sans-serif;
+  color: #1f2937;
+  background: #f8fafc;
+  min-height: 100vh;
+}
+
+.dashboard-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 2rem;
+  background: #fff;
+  border-bottom: 1px solid #e5e7eb;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.firebase-logo { width: 32px; height: 32px; }
+.dashboard-nav .nav-link { margin-right: 1rem; color: #374151; text-decoration: none; font-weight: 500; }
+.dashboard-nav .nav-link.active { font-weight: 600; color: #2563eb; }
+
+.dashboard-main { padding: 2rem; }
+
+/* Stats grid */
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px,1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+.stat-card { background:#f9fafb; border-radius:12px; padding:1.5rem; text-align:center; box-shadow:0 2px 6px rgba(0,0,0,0.05); }
+.stat-value { font-size:2rem; font-weight:700; margin-top:0.5rem; color:#2563eb; }
+
+/* Actions grid */
+.actions-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px,1fr)); gap:1.5rem; margin-bottom:2rem; }
+.action-card { background:#fff; border-radius:12px; padding:1.5rem; border:1px solid #e5e7eb; transition:transform .2s, box-shadow .2s; }
+.action-card:hover { transform:translateY(-4px); box-shadow:0 4px 12px rgba(0,0,0,0.1); }
+.action-link { display:inline-block; margin-top:.75rem; color:#2563eb; text-decoration:none; font-weight:500; }
+.action-link:hover { text-decoration:underline; }
+
+/* Categories grid */
+.categories-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px,1fr)); gap:1rem; margin-bottom:2rem; }
+.category-card { background:#fff; border-radius:8px; padding:.75rem 1rem; border:1px solid #e5e7eb; text-align:center; font-weight:500; color:#374151; transition:background-color .2s; }
+.category-card:hover { background-color:#f3f4f6; }
+
+/* Billing card */
+.billing-card { background:#f0f9ff; border:1px solid #bfdbfe; border-radius:12px; padding:1.5rem; text-align:center; }
+
+@media (max-width:640px) {
+  .dashboard-header { flex-direction:column; align-items:flex-start; }
+  .dashboard-nav .nav-link { margin-right:.5rem; }
+}
