@@ -30,7 +30,8 @@ function LoginPage() {
   return (
     <div className="animated-page" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', backgroundColor: '#f3f4f6' }}>
       <div style={{ padding: '2rem', backgroundColor: 'white', borderRadius: '8px', boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)', width: '100%', maxWidth: '400px' }}>
-        <h2 style={{ textAlign: 'center', marginBottom: '1.5rem', color: '#111827' }}>Admin Login</h2>
+        <h2 style={{ textAlign: 'center', marginBottom: '1.5rem', color: '#111827' }}>Login</h2>
+<p style={{ textAlign: 'center', marginBottom: '1rem', color: '#555' }}>Admins use this page for dashboard access. Regular users can log in or sign up from the donation flow.</p>
         
         {error && <div style={{ backgroundColor: '#fee2e2', color: '#b91c1c', padding: '0.75rem', borderRadius: '4px', marginBottom: '1rem', textAlign: 'center' }}>{error}</div>}
         
