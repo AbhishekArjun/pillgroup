@@ -48,7 +48,7 @@ const db = new sqlite3.Database(dbPath, (err) => {
       } else {
         // SQLite doesn't natively support "ADD COLUMN IF NOT EXISTS". 
         // We can try to add the column, and ignore the error if it already exists.
-        db.run("ALTER TABLE children ADD COLUMN imageUrl TEXT", (err) => {
+        db.run("ALTER TABLE children ADD COLUMN imageUrl TEXT", (_err) => {
           // Ignore error (column probably already exists)
         });
 

@@ -1,15 +1,20 @@
-import React, { useState, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 const TestimonialSlider = ({ testimonials }) => {
   const [currentSlide, setCurrentSlide] = useState(0);
 
-  const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % testimonials.length);
-  const prevSlide = () => setCurrentSlide((prev) => (prev - 1 < 0 ? testimonials.length - 1 : prev - 1));
+  const nextSlide = useCallback(() => {
+    setCurrentSlide((prev) => (prev + 1) % testimonials.length);
+  }, [testimonials.length]);
+
+  const prevSlide = useCallback(() => {
+    setCurrentSlide((prev) => (prev - 1 < 0 ? testimonials.length - 1 : prev - 1));
+  }, [testimonials.length]);
 
   useEffect(() => {
     const timer = setInterval(nextSlide, 6000);
     return () => clearInterval(timer);
-  }, [testimonials.length]);
+  }, [nextSlide]);
 
   return (
     <div className="testimonial-slider fade-up">

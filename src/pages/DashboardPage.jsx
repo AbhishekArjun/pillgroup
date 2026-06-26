@@ -1,4 +1,3 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
 import './Dashboard.css';
 
@@ -14,7 +13,7 @@ function DashboardPage() {
     { title: 'Add Analytics & Monitoring', description: 'Learn about Google Analytics and Firebase monitoring products', link: '#' },
     { title: 'Build a Backend', description: 'Explore SQL & NoSQL options for your app', link: '#' },
     { title: 'Add AI to your App', description: 'Integrate generative AI services', link: '#' },
-    { title: 'Host a Web App', description: 'Deploy modern full‑stack web apps', link: '#' },
+    { title: 'Host a Web App', description: 'Deploy modern full-stack web apps', link: '#' },
     { title: 'Learn Firebase Dev Tools', description: 'Emulator, CLI, and Studio', link: '#' },
     { title: 'Link to AdMob', description: 'Monetize your app with ads', link: '#' },
     { title: 'Link to Google Play', description: 'Publish Android app and track performance', link: '#' },
@@ -50,7 +49,7 @@ function DashboardPage() {
             <p className="stat-value">{stats.dau}</p>
           </div>
           <div className="stat-card">
-            <h2>Day 1 Retention</h2>
+            <h2>Day 1 Retention</h2>
             <p className="stat-value">{stats.retention}%</p>
           </div>
           <div className="stat-card">
@@ -76,7 +75,7 @@ function DashboardPage() {
         </section>
 
         <section className="billing-card">
-          <h3>Billing plan: Spark (No‑cost $0/month)</h3>
+          <h3>Billing plan: Spark (No-cost $0/month)</h3>
           <p>Current project: pill</p>
         </section>
       </main>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getChildrenData, addChild, updateChild, deleteChild } from '../utils/storage';
 import { useAuth } from '../components/AuthContext';
